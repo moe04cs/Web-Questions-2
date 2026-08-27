@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Development Quiz</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+        margin: 0;
+        padding: 40px 20px;
+        color: #333;
+        min-height: 100vh;
+      }
+      .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+      }
+      .question-block {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .question-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        white-space: pre-wrap;
+      }
+      .options-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .option-btn {
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 1rem;
+        text-align: left;
+        transition: all 0.2s ease;
+      }
+      .option-btn:hover {
+        background: #f8f9fa;
+        border-color: #bdc3c7;
+      }
+      .option-btn:disabled {
+        cursor: not-allowed;
+      }
+      .correct {
+        background-color: #d4edda !important;
+        border-color: #28a745 !important;
+        color: #155724;
+      }
+      .wrong {
+        background-color: #f8d7da !important;
+        border-color: #dc3545 !important;
+        color: #721c24;
+      }
+      .feedback {
+        margin-top: 10px;
+        font-weight: bold;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Web Development Practice Quiz</h1>
+      <div id="quiz-content"></div>
+    </div>
+
+    <script>
+      const quizData = [
+        {
+          id: 1,
+          question:
+            "1. Which organization sets standards for the World Wide Web to facilitate interoperability?",
+          options: [
+            "A. Internet Engineering Task Force (IETF)",
+            "B. World Wide Web Consortium (W3C)",
+            "C. Microsoft",
+            "D. Apache Foundation",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 2,
+          question:
+            "2. Which part of the URL specifies the human-readable name of the specific location where a resource is located?",
+          options: ["A. Protocol", "B. Path", "C. Domain name", "D. Port"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 3,
+          question:
+            "3. What is the primary function of the CSS (Cascading Style Sheets) language?",
+          options: [
+            "A. To write programs that run on the server",
+            "B. To describe what is 'on' a web page",
+            "C. To control the visual appearance of web pages",
+            "D. To query a database",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 4,
+          question:
+            "4. Which CSS selector matches any HTML element that has a specific ID attribute?",
+          options: [
+            "A. Element Type Selector",
+            "B. Class Selector (started with a dot)",
+            "C. ID Selector (started with a hash #)",
+            "D. Universal Selector",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 5,
+          question:
+            "5. If there are conflicting CSS rules, which of the following has the highest priority?",
+          options: [
+            "A. External stylesheet",
+            "B. Internal stylesheet",
+            "C. Inline styling",
+            "D. Browser default",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 6,
+          question:
+            "6. Which CSS property adds a shadow to the text of an element?",
+          options: [
+            "A. text-transform",
+            "B. text-decoration",
+            "C. text-shadow",
+            "D. word-spacing",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 7,
+          question:
+            "7. What happens if you define margin: 25px 50px 75px 100px; in CSS?",
+          options: [
+            "A. Top is 25px, Right is 50px, Bottom is 75px, Left is 100px",
+            "B. Top is 100px, Right is 75px, Bottom is 50px, Left is 25px",
+            "C. Top and Bottom are 25px, Left and Right are 100px",
+            "D. All margins are set to 25px",
+          ],
+          correctAnswerIndex: 0,
+        },
+        {
+          id: 8,
+          question:
+            "8. Which CSS property is used to specify the space between the element border and the element content?",
+          options: [
+            "A. margin",
+            "B. padding",
+            "C. border-spacing",
+            "D. border-collapse",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 9,
+          question: "9. What is the correct HTML tag to define a hyperlink?",
+          options: ["A. <link>", "B. <a>", "C. <href>", "D. <hyper>"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 10,
+          question:
+            "10. Which target attribute value opens a linked document in a new window or tab?",
+          options: ["A. _self", "B. _parent", "C. _blank", "D. _top"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 11,
+          question:
+            "11. How do you create a bookmark link to a specific part of a web page with the id 'C4'?",
+          options: [
+            "A. <a href='#C4'>",
+            "B. <a target='C4'>",
+            "C. <a name='C4'>",
+            "D. <a href='id=C4'>",
+          ],
+          correctAnswerIndex: 0,
+        },
+        {
+          id: 12,
+          question: "12. What is the purpose of the <iframe> tag?",
+          options: [
+            "A. To display a web page within a web page",
+            "B. To create a form",
+            "C. To add an image to a webpage",
+            "D. To structure a table",
+          ],
+          correctAnswerIndex: 0,
+        },
+        {
+          id: 13,
+          question:
+            "13. When using an image map, which element contains the clickable areas?",
+          options: ["A. <usemap>", "B. <area>", "C. <map>", "D. <img>"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 14,
+          question:
+            "14. Which attribute provides alternate text for an image if it cannot be viewed?",
+          options: ["A. title", "B. description", "C. alt", "D. src"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 15,
+          question:
+            "15. Which HTML tag is used to define a standard data cell in a table?",
+          options: ["A. <tr>", "B. <th>", "C. <table>", "D. <td>"],
+          correctAnswerIndex: 3,
+        },
+        {
+          id: 16,
+          question:
+            "16. To combine or merge adjacent table cells across multiple columns, which attribute is used?",
+          options: [
+            "A. rowspan",
+            "B. colspan",
+            "C. cellspacing",
+            "D. cellpadding",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 17,
+          question:
+            "17. In CSS, which property makes table borders collapse into a single border?",
+          options: [
+            "A. border-spacing",
+            "B. border-collapse",
+            "C. border-width",
+            "D. margin",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 18,
+          question:
+            "18. Which form method is best suited for sending sensitive or personal information because it does not display data in the URL?",
+          options: ["A. GET", "B. POST", "C. PUT", "D. FETCH"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 19,
+          question:
+            "19. If you want to upload a binary file (like an image) via an HTML form, which enctype must be used?",
+          options: [
+            "A. application/x-www-form-urlencoded",
+            "B. text/plain",
+            "C. multipart/form-data",
+            "D. file/upload",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 20,
+          question:
+            "20. Which HTML tag is used for multi-line text input controls?",
+          options: [
+            "A. <input type='text'>",
+            "B. <textarea>",
+            "C. <input type='multiline'>",
+            "D. <textbox>",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 21,
+          question:
+            "21. When creating a group of radio buttons where only one can be selected, what must be true about their attributes?",
+          options: [
+            "A. They must have different name attributes",
+            "B. They must have the same value attribute",
+            "C. They must have the same name attribute",
+            "D. They must have the same id attribute",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 22,
+          question:
+            "22. How do you allow a user to select multiple items from a <select> drop-down menu?",
+          options: [
+            "A. Set the size attribute to 1",
+            "B. Add the multiple='multiple' attribute",
+            "C. Use the <input type='dropdown'> tag",
+            "D. Group options using <optgroup>",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 23,
+          question:
+            "23. In a file upload input (<input type='file'>), which attribute specifies the types of files the server accepts?",
+          options: ["A. type", "B. enctype", "C. accept", "D. value"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 24,
+          question:
+            "24. Which HTML5 attribute specifies that an input field must be filled out before submitting the form?",
+          options: ["A. mandatory", "B. required", "C. pattern", "D. validate"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 25,
+          question:
+            "25. Which attribute allows you to add basic data validation using a regular expression?",
+          options: ["A. regex", "B. validate", "C. pattern", "D. match"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 26,
+          question: "26. In PHP, what symbol is used to start a variable name?",
+          options: ["A. #", "B. &", "C. $", "D. ☑"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 27,
+          question:
+            "27. Which of the following is TRUE about case-sensitivity in PHP?",
+          options: [
+            "A. All keywords and function names are case-sensitive",
+            "B. Variable names are case-sensitive",
+            "C. Variable names are NOT case-sensitive",
+            "D. Nothing in PHP is case-sensitive",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 28,
+          question: "28. How do you define a constant in PHP?",
+          options: [
+            "A. Using the const keyword before a variable",
+            "B. Using the define() function",
+            "C. Using constant() function",
+            "D. By capitalizing the variable name like $CONSTANT",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 29,
+          question:
+            "29. What operator is used to concatenate two strings in PHP?",
+          options: ["A. +", "B. &", "C. .", "D. concat()"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 30,
+          question:
+            "30. In PHP, what array stores all global variables and allows them to be accessed within functions?",
+          options: [
+            "A. $GLOBAL_VARS",
+            "B. $GLOBALS",
+            "C. $_ALL",
+            "D. $_SERVER",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 31,
+          question:
+            "31. Which PHP function is used to get the length (number of elements) of an array?",
+          options: ["A. length()", "B. size()", "C. count()", "D. sizeof()"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 32,
+          question:
+            "32. Which PHP array sort function is used to sort an array in descending numerical or alphabetical order?",
+          options: ["A. sort()", "B. rsort()", "C. asort()", "D. ksort()"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 33,
+          question:
+            "33. Which PHP array sort function sorts associative arrays in ascending order according to the key?",
+          options: ["A. sort()", "B. asort()", "C. ksort()", "D. rsort()"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 34,
+          question:
+            "34. Which superglobal variable contains the contents of both ETand_POST?",
+          options: ["A. $_ALL", "B. $_FORMDATA", "C. $_REQUEST", "D. $_SERVER"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 35,
+          question:
+            "35. Which PHP function determines if a variable is set and is not NULL?",
+          options: ["A. is_set()", "B. isset()", "C. exists()", "D. defined()"],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 36,
+          question:
+            "36. When handling a multiple select menu in a form using PHP, how should you name the select element in HTML to ensure all values are received?",
+          options: [
+            "A. name='options'",
+            "B. name='options(array)'",
+            "C. name='options[]'",
+            "D. name='options_multiple'",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 37,
+          question:
+            "37. What is the correct syntax for creating a cookie in PHP?",
+          options: [
+            "A. create_cookie('name', 'value', time);",
+            "B. setcookie('name', 'value', expire_date);",
+            "C. $_COOKIE['name'] = 'value';",
+            "D. cookie_set('name', 'value', expire_date);",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 38,
+          question: "38. How do you delete a cookie in PHP?",
+          options: [
+            "A. Use the delete_cookie() function",
+            "B. Call setcookie() with an expiration date in the past",
+            "C. Set $_COOKIE['name'] = null;",
+            "D. Use unset($_COOKIE['name']);",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 39,
+          question:
+            "39. What must be called before accessing or modifying session variables on every PHP page?",
+          options: [
+            "A. start_session()",
+            "B. session_start()",
+            "C. $_SESSION_START",
+            "D. session_init()",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 40,
+          question:
+            "40. Which function destroys all the variables registered to a PHP session?",
+          options: [
+            "A. session_destroy()",
+            "B. session_unset()",
+            "C. unset($_SESSION)",
+            "D. session_delete()",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 41,
+          question:
+            "41. Which function is used to connect to a MySQL database in the provided PHP examples?",
+          options: [
+            "A. mysql_connect()",
+            "B. pdo_connect()",
+            "C. mysqli_connect()",
+            "D. db_connect()",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 42,
+          question:
+            "42. Which function fetches one row of data as an associative and a numeric array in PHP?",
+          options: [
+            "A. mysqli_fetch_row()",
+            "B. mysqli_fetch_array()",
+            "C. mysqli_get_row()",
+            "D. mysqli_fetch_assoc()",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 43,
+          question:
+            "43. Which tag defines an inline frame to embed another document within the current HTML document?",
+          options: ["A. <frame>", "B. <frameset>", "C. <iframe>", "D. <embed>"],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 44,
+          question:
+            "44. In CSS, what does list-style-type: none; do to an unordered list?",
+          options: [
+            "A. Changes the bullets to squares",
+            "B. Changes the bullets to circles",
+            "C. Removes the list item markers completely",
+            "D. Hides the list entirely",
+          ],
+          correctAnswerIndex: 2,
+        },
+        {
+          id: 45,
+          question:
+            "45. What is the default method when submitting form data if the method attribute is omitted?",
+          options: ["A. GET", "B. POST", "C. PUT", "D. REQUEST"],
+          correctAnswerIndex: 0,
+        },
+        {
+          id: 46,
+          question:
+            '46. Consider the following code setup with an external CSS file and an internal style block:\nExternal CSS (style.css):\nh1 { color: pink; }\nHTML File:\n<head>\n<style> h1 { color: red; } </style>\n<link rel="stylesheet" type="text/css" href="style.css"/>\n</head>\n<body>\n<h1>Jordan</h1>\n</body>\nWhat will be the color of the text "Jordan" when rendered in the browser?',
+          options: [
+            "A. Red",
+            "B. Pink",
+            "C. Black",
+            "D. It will not have a color due to conflicting rules",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 47,
+          question:
+            '47. Consider a slight variation of the previous code where the order in the <head> is swapped:\nExternal CSS (style.css):\nh1 { color: pink; }\nHTML File:\n<head>\n<link rel="stylesheet" type="text/css" href="style.css"/>\n<style> h1 { color: red; } </style>\n</head>\n<body>\n<h1>Jordan</h1>\n</body>\nWhat will be the color of the text "Jordan" now?',
+          options: [
+            "A. Red",
+            "B. Pink",
+            "C. Black",
+            "D. It will not have a color due to conflicting rules",
+          ],
+          correctAnswerIndex: 0,
+        },
+        {
+          id: 48,
+          question:
+            '48. Look at the following HTML and internal CSS code:\n<style>\n#heading { color: green; }\n.title { color: blue; }\nh1 { color: red; }\n</style>\n<body>\n<h1 style="color: orange;" class="title" id="heading">Hello World</h1>\n</body>\nWhat will be the final color of the text "Hello World"?',
+          options: ["A. Green", "B. Blue", "C. Red", "D. Orange"],
+          correctAnswerIndex: 3,
+        },
+        {
+          id: 49,
+          question:
+            "49. Consider the following CSS rule grouping:\n<style>\nh1, h2, h3 { font-size: 15px; color: green; }\nh2 { color: blue; }\n</style>\nIf you place an <h2> element in your HTML body, how will it be styled?",
+          options: [
+            "A. It will have a 15px font size and green color",
+            "B. It will have a 15px font size and blue color",
+            "C. It will have the browser's default font size and blue color",
+            "D. The browser will ignore all rules due to the conflict",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 50,
+          question:
+            "50. What is the fundamental rule CSS uses to determine the winner when two internal rules have the EXACT same specificity (e.g., both target the p element directly)?",
+          options: [
+            "A. The rule that appears first in the code wins",
+            "B. The rule that appears later in the code overrides earlier rules",
+            "C. The browser randomly selects one",
+            "D. The element defaults to black text",
+          ],
+          correctAnswerIndex: 1,
+        },
+        {
+          id: 51,
+          question:
+            '51. Consider the following code snippet combining inline styles and internal CSS:\n<style>\np { padding: 50px; margin: 10px; }\n</style>\n<p style="padding: 25px;">Welcome</p>\nWhat padding and margin values will be applied to the paragraph?',
+          options: [
+            "A. Padding: 50px, Margin: 10px",
+            "B. Padding: 25px, Margin: 0px",
+            "C. Padding: 50px, Margin: 0px",
+            "D. Padding: 25px, Margin: 10px",
+          ],
+          correctAnswerIndex: 3,
+        },
+      ];
+
+      const quizContent = document.getElementById("quiz-content");
+
+      quizData.forEach((q, qIndex) => {
+        const block = document.createElement("div");
+        block.className = "question-block";
+
+        const title = document.createElement("div");
+        title.className = "question-text";
+        title.innerText = q.question;
+        block.appendChild(title);
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options-container";
+
+        const feedback = document.createElement("div");
+        feedback.className = "feedback";
+
+        const buttons = [];
+        q.options.forEach((optText, optIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.innerText = optText;
+
+          btn.onclick = () => {
+            buttons.forEach((b) => (b.disabled = true));
+
+            if (optIndex === q.correctAnswerIndex) {
+              btn.classList.add("correct");
+              feedback.style.color = "#28a745";
+              feedback.innerText = "Correct!";
+            } else {
+              btn.classList.add("wrong");
+              buttons[q.correctAnswerIndex].classList.add("correct");
+              feedback.style.color = "#dc3545";
+              feedback.innerText =
+                "Incorrect. The right answer is highlighted.";
+            }
+            feedback.style.display = "block";
+          };
+
+          buttons.push(btn);
+          optionsDiv.appendChild(btn);
+        });
+
+        block.appendChild(optionsDiv);
+        block.appendChild(feedback);
+        quizContent.appendChild(block);
+      });
+    </script>
+  </body>
+</html>
